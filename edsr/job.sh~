@@ -1,0 +1,20 @@
+#!/bin/sh -l
+# FILENAME:  job.sh
+
+#SBATCH --nodes=1 --gpus-per-node=2 --cpus-per-task=4 
+#SBATCH --time=12:00:00
+#SBATCH --job-name edsr
+
+module load learning/conda−5.1.0−py36−gpu
+conda create −n superres python =3.9.5
+source activate superres
+module load cuda/11.3
+module load cudnn
+conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
+pip install pillow
+pip install torchsummary
+
+# Change to the directory from which you originally submitted this job.
+cd $SLURM_SUBMIT_DIR
+
+python engine.py
