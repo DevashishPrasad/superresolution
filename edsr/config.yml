@@ -22,4 +22,4 @@ training_params:
   learning_rate: 0.001
   mini_batch_size: 64
   epochs: 500
-  patience: 4
+  patience: 10

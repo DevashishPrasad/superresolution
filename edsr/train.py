@@ -31,7 +31,7 @@ def get_lr(optimizer):
     for param_group in optimizer.param_groups:
         return param_group['lr']
 
-def train_model(model, dataloaders, criterion, optimizer, lr_scheduler, mini_batch_size=16, num_epochs=25):
+def train_model(model, dataloaders, criterion, optimizer, lr_scheduler, num_epochs=25):
     since = time.time()
     val_acc_history = []
     train_acc_history = []
@@ -90,7 +90,7 @@ def train_model(model, dataloaders, criterion, optimizer, lr_scheduler, mini_bat
             
             # LR scheduler step
             if(phase == 'val'):
-                lr_scheduler.step(epoch_acc)
+                lr_scheduler.step(epoch_loss)
 
             # Print training statistics after the epoch
             print(f'\n\n*********** Phase[{phase}] Epoch: {epoch}/{num_epochs-1} \t Epoch Acc: {round(epoch_acc,5)} \t Epoch Loss: {round(epoch_loss,5)} ***********\n\n')

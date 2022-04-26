@@ -40,9 +40,8 @@ summary(model, (3, 64, 64), batch_size=mini_b_size)
 
 ## Initialize optimizers, schedulers and criterion
 optimizer_ft = optim.Adam(params_to_update, lr=lr, betas=(0.9, 0.999))
-decayRate = 0.5
-lr_decay = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer_ft, mode='max', factor=0.1, threshold=0.01, min_lr=0.000001, patience=patience)
+lr_decayer = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer_ft, mode='min', factor=0.1, threshold=0.005, min_lr=0.00001, patience=patience)
 criterion = nn.L1Loss()
 
 ## Execute Training
-train_model(model, dataloaders, criterion, optimizer_ft, lr_decay, mini_batch_size=mini_b_size, num_epochs=epochs)
+train_model(model, dataloaders, criterion, optimizer_ft, lr_decayer, num_epochs=epochs)
