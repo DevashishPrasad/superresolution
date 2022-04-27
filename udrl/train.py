@@ -97,8 +97,8 @@ def train_model(model, dataloaders, losses, optimizer, lr_scheduler, num_epochs=
                                 batch_psnr += cv2.PSNR(img1, img2)
                 else:
                     with torch.set_grad_enabled(phase == 'train'):
-                        if epoch > enco_epochs:
-                            outputs = model(inputs) # Forward prop
+                        if epoch >= enco_epochs:
+                            outputs = model(inputs[:, 0, ...]) # Forward prop
                             loss_l1 = losses['l1'](outputs, labels[:,0,...])
                             running_l1_loss += loss_l1.item() * inputs.size(0)
 
