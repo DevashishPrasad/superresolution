@@ -45,8 +45,7 @@ def train_model(model, dataloaders, losses, optimizer, lr_scheduler, num_epochs=
     best_acc = 0.0
     mini_batch_no = 0
     loss = 0
-    # enco_epochs = num_epochs//5
-    enco_epochs = 0
+    enco_epochs = num_epochs//5
 
     enc = model.E
 
