@@ -1,0 +1,86 @@
+import numpy as np
+import imageio
+import argparse
+import os
+import cv2
+import glob
+from tqdm import tqdm
+from skimage.metrics import structural_similarity as ssim
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--data_dir', type=str, default='D:/Research/Viasat/Implementation/Experiment 4/Dataset/testset',
+                        help='image directory')
+    parser.add_argument('--scale', type=str, default='4',
+                        help='super resolution scale')
+    parser.add_argument('--resume', type=int, default=600,
+                        help='resume from specific checkpoint')
+    parser.add_argument('--blur_type', type=str, default='aniso_gaussian',
+                        help='blur types (iso_gaussian | aniso_gaussian)')
+    return parser.parse_args()
+
+def main():
+    args = parse_args()
+
+    # path to save sr images
+    if args.blur_type == 'iso_gaussian':
+        dir = './experiment/blindsr_x' + str(int(args.scale[0])) + '_bicubic_iso'
+    elif args.blur_type == 'aniso_gaussian':
+        dir = './experiment/blindsr_x' + str(int(args.scale[0])) + '_bicubic_aniso'
+    save_dir = dir + '/benchmark/'
+    if not os.path.exists(save_dir):
+        os.mkdir(save_dir)
+
+    # Prepare model
+    srm = cv2.dnn_superres.DnnSuperResImpl_create()
+    path = f"EDSR_x4.pb"
+    srm.readModel(path)
+    srm.setModel("edsr",4)
+
+    # process datasets
+    datasets = glob.glob(args.data_dir + '/*')
+
+    # Produce benchmark
+    for dataset in datasets:
+        dataset = dataset.replace('\\', '/')
+        dataset_name = dataset.split('/')[-1]
+        lr_paths = glob.glob(dataset + f"/LR/X{args.scale}/imgs/*")
+        hr_paths = glob.glob(dataset + f"/HR/*")
+        eval_psnr = 0
+        eval_ssim = 0
+        if not os.path.exists(save_dir + '/' + dataset_name):
+            os.mkdir(save_dir + '/' + dataset_name)
+        for lr_path, hr_path in tqdm(zip(lr_paths, hr_paths)):
+
+            # read LR and HR image using filename
+            lr_path = lr_path.replace('\\', '/')
+            hr_path = hr_path.replace('\\', '/')
+            lr = imageio.imread(lr_path)
+            hr = imageio.imread(hr_path)
+
+            # check shape
+            if len(lr.shape) == 2 and len(hr.shape) == 2:
+                lr = cv2.cvtColor(lr, cv2.COLOR_GRAY2BGR)
+                hr = cv2.cvtColor(hr, cv2.COLOR_GRAY2BGR)
+
+            # inference
+            sr = srm.upsample(lr)
+
+            # crop border
+            w, h = sr.shape[1], sr.shape[0]
+            scale = int(args.scale)
+            hr = hr[:int(h//scale*scale), :int(w//scale*scale), :]
+
+            # metrics
+            eval_psnr += cv2.PSNR(hr,sr)
+            eval_ssim += ssim(hr, sr, multichannel=True, gaussian_weights=True, sigma=1.5, use_sample_covariance=False, data_range=255)
+
+            # # save sr results
+            # img_name = lr_path.split('.png')[0].split('/')[-1]
+            # cv2.imwrite(save_dir + '/' + dataset_name + '/' + img_name + '_sr.png', result)
+
+        # print metrics
+        print(f'{dataset_name}: PSNR: {eval_psnr / len(lr_paths)}, SSIM: {eval_ssim / len(lr_paths)}')
+
+if __name__ == '__main__':
+    main()

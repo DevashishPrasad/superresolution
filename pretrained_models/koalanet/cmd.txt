@@ -1,0 +1,40 @@
+python main.py ^
+--phase test ^
+--test_data_path "D:\Research\Viasat\Implementation\Experiment 4\Dataset\testset\Set5\LR\X2\imgs" ^
+--test_label_path "D:\Research\Viasat\Implementation\Experiment 4\Dataset\testset\Set5\HR" ^
+--test_ckpt_path "D:\Research\Viasat\Implementation\Experiment 4\koalanet\KOALAnet\weights\pretrained_ckpt\" ^
+--factor 2
+
+python main.py ^
+--phase test ^
+--test_data_path "D:\Research\Viasat\Implementation\Experiment 4\Dataset\testset\Set5\LR\X4\imgs" ^
+--test_label_path "D:\Research\Viasat\Implementation\Experiment 4\Dataset\testset\Set5\HR" ^
+--test_ckpt_path "D:\Research\Viasat\Implementation\Experiment 4\koalanet\KOALAnet\weights\pretrained_ckpt"
+
+
+python main.py ^
+--phase test ^
+--test_data_path "D:\Research\Viasat\Implementation\Experiment 4\Dataset\testset\Set5\LR\X2\imgs" ^
+--test_label_path "D:\Research\Viasat\Implementation\Experiment 4\Dataset\testset\Set5\HR" ^
+--test_ckpt_path "D:\Research\Viasat\Implementation\Experiment 4\koalanet\KOALAnet\weights\pretrained_ckpt"
+
+
+
+
+
+
+
+
+
+python test.py --test_only ^
+               --dir_data="D:\Research\Viasat\Implementation\Experiment 4\Dataset\testset" ^
+               --data_test="Set14" ^
+               --model="blindsr" ^
+               --scale=4 ^
+               --resume=600 ^
+               --blur_type="aniso_gaussian" ^
+               --noise=0.0 ^
+               --theta=0.0 ^
+               --lambda_1=0.2 ^
+               --lambda_2=4.0 ^
+		   --n_GPUs 1
