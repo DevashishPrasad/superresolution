@@ -40,8 +40,6 @@ factor x4)
 </table>
 
 
-For more information, 
+## More information 
 
 please read the paper in this repo - Blind_Image_Super_Resolution.pdf
-
-or go through shortslides - Blind SR slides.pdf
